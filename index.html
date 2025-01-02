@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <script type="text/javascript" src="json_loader.js"></script>
+    <link rel="stylesheet" href="Home.css">
+    
+</head>
+<body>
+    <span>
+        <input type="text" placeholder="Enter Address" id="searchAddress">
+    </span>
+    <div id="googleMap" style="width:100%;height:400px;"></div>
+    <div class="location">
+        <h4 id="loc"></h1>
+        <h1 id="address"></h4>
+        <div id="table"></div>
+    </div>
+    
+    <script>
+    function myMap() {
+    var mapProp= {
+    center:new google.maps.LatLng(39.8283,-98.5795),
+    zoom:4,
+    };
+    var map = new google.maps.Map(document.getElementById("googleMap"),mapProp);
+
+
+    
+    document.getElementById('searchAddress').addEventListener("keydown", function(event){
+        if(event.keyCode==13){
+            coordinates = search(this)
+            var longitude = coordinates[0];
+            var latitude = coordinates[1];
+            console.log(coordinates);
+            getAddress(longitude,latitude);
+            map.setZoom(10);
+            map.setCenter(new google.maps.LatLng(latitude,longitude));
+            document.getElementById("loc").textContent = latitude + ', ' + longitude;
+            
+            gridInfo = getGridNums(longitude, latitude);
+
+            polygon = getForecast(gridInfo);
+            polygon = convertPolygon(polygon);
+            console.log(polygon);
+            
+            const myPolygon = new google.maps.Polygon({
+                paths: polygon,
+                strokeColor: "#FF0000",
+                strokeOpacity: 0.8,
+                strokeWeight: 2,
+                fillColor: "#FF0000",
+                fillOpacity: 0.35,
+            });
+            
+            myPolygon.setMap(map);
+        }
+    })
+
+
+    google.maps.event.addListener(map, 'click', function(event){
+            console.log('clicked')
+            var latitude = event.latLng.lat();
+            var longitude = event.latLng.lng();
+            getAddress(longitude,latitude);
+            map.setZoom(10);
+            map.setCenter(new google.maps.LatLng(latitude,longitude));
+            document.getElementById("loc").textContent = latitude + ', ' + longitude;
+            
+            gridInfo = getGridNums(longitude, latitude);
+
+            polygon = getForecast(gridInfo);
+            polygon = convertPolygon(polygon);
+            console.log(polygon);
+            
+            const myPolygon = new google.maps.Polygon({
+                paths: polygon,
+                strokeColor: "#FF0000",
+                strokeOpacity: 0.8,
+                strokeWeight: 2,
+                fillColor: "#FF0000",
+                fillOpacity: 0.35,
+            });
+            
+            myPolygon.setMap(map);
+            
+             
+        })
+    }
+
+    </script>
+    
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDpVQLgCFstJJYapfn9ftoazoEGPMA9ehY&callback=myMap" defer></script>
+   
+
+</body>
+</html>
